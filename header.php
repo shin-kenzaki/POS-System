@@ -26,6 +26,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <?php if ($current_page === 'dashboard.php'): ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <?php endif; ?>
+    <?php if ($current_page === 'inventory.php'): ?>
+    <link rel="stylesheet" href="assets/css/inventory.css">
+    <?php endif; ?>
 </head>
 <body>
     <div class="dashboard-container">
