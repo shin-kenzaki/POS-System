@@ -1,0 +1,83 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Set the base directory
+RewriteBase /POS-System/
+
+# Force HTTPS - uncomment in production
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Custom error pages
+ErrorDocument 404 /POS-System/errors/404.php
+ErrorDocument 403 /POS-System/errors/403.php
+ErrorDocument 500 /POS-System/errors/500.php
+
+# Prevent directory listing
+Options -Indexes
+
+# Clean URLs for products
+RewriteRule ^product/([0-9]+)/?$ product_details.php?id=$1 [NC,L]
+
+# Clean URLs for categories
+RewriteRule ^category/([^/]+)/?$ category.php?name=$1 [NC,L]
+
+# Clean URLs for customers
+RewriteRule ^customer/([0-9]+)/?$ customer_details.php?id=$1 [NC,L]
+
+# Block access to sensitive files
+<FilesMatch "^\.htaccess|\.env|config\.php|README\.md">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect against XSS attacks
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "same-origin"
+    # Enable in production for better security:
+    # Header set Content-Security-Policy "default-src 'self';"
+</IfModule>
+
+# Enable compression for better performance
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json
+</IfModule>
+
+# Enable caching for static files
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresDefault "access plus 2 days"
+</IfModule>
+
+# Limit file upload size - 10MB
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+
+# Protect against SQL injection and other attacks
+php_flag register_globals off
+php_flag magic_quotes_gpc off
+
+# Stop hotlinking - uncomment and set your domain in production
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?yourdomain.com [NC]
+# RewriteRule \.(jpg|jpeg|png|gif|svg)$ - [NC,F,L]
+
+# Prevent access to system files
+RedirectMatch 403 /\..*$
+
+# Block bad bots
+RewriteCond %{HTTP_USER_AGENT} ^(Wget|Curl|Indy\ Library|libwww-perl|GetRight|GetWeb!|Go!Zilla|Download\ Demon|Go-Ahead-Got-It|TurnitinBot|GrabNet) [NC]
+RewriteRule .* - [F,L]
