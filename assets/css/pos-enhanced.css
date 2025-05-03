@@ -2,7 +2,7 @@
 
 /* POS Layout */
 .pos-dashboard {
-    padding: 15px;
+    padding: 12px; /* Reduced from 15px */
     display: flex;
     flex-direction: column;
     height: calc(100vh - 70px - 50px); /* Minus header and footer */
@@ -12,29 +12,29 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Reduced from 15px */
 }
 
 .pos-header h1 {
-    font-size: 24px;
+    font-size: 20px; /* Reduced from 24px */
     margin: 0;
     display: flex;
     align-items: center;
 }
 
 .pos-header h1 i {
-    margin-right: 10px;
+    margin-right: 8px; /* Reduced from 10px */
     color: #4d4d4d;
 }
 
 .quick-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px; /* Reduced from 8px */
 }
 
 .btn-icon {
-    width: 40px;
-    height: 40px;
+    width: 36px; /* Reduced from 40px */
+    height: 36px; /* Reduced from 40px */
     border-radius: 50%;
     border: none;
     background-color: #f9f9f9;
@@ -54,8 +54,8 @@
 
 .pos-content {
     display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 15px;
+    grid-template-columns: 1fr 340px; /* Reduced from 380px */
+    gap: 12px; /* Reduced from 15px */
     height: 100%;
     overflow: hidden;
 }
@@ -65,7 +65,7 @@
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    padding: 15px;
+    padding: 12px; /* Reduced from 15px */
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -73,17 +73,17 @@
 
 .search-wrapper {
     position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Reduced from 15px */
 }
 
 .search-wrapper input {
     width: 100%;
-    padding: 12px 15px;
-    padding-left: 40px;
-    padding-right: 40px;
+    padding: 10px 15px; /* Reduced from 12px 15px */
+    padding-left: 36px; /* Reduced from 40px */
+    padding-right: 36px; /* Reduced from 40px */
     border: 1px solid #eaeaea;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px; /* Reduced from 16px */
     transition: all 0.3s;
 }
 
@@ -95,7 +95,7 @@
 
 .search-icon {
     position: absolute;
-    left: 12px;
+    left: 10px; /* Reduced from 12px */
     top: 50%;
     transform: translateY(-50%);
     color: #999;
@@ -103,7 +103,7 @@
 
 .barcode-icon {
     position: absolute;
-    right: 12px;
+    right: 10px; /* Reduced from 12px */
     top: 50%;
     transform: translateY(-50%);
     color: #666;
@@ -117,13 +117,13 @@
 
 /* Product Categories */
 .product-categories {
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Reduced from 15px */
 }
 
 .category-buttons {
     display: flex;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 6px; /* Reduced from 8px */
     overflow-x: auto;
     padding-bottom: 5px;
 }
@@ -138,14 +138,14 @@
 }
 
 .category-btn {
-    padding: 8px 15px;
+    padding: 6px 12px; /* Reduced from 8px 15px */
     background-color: #f5f5f5;
     border: 1px solid #eaeaea;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
-    font-size: 13px;
+    font-size: 12px; /* Reduced from 13px */
 }
 
 .category-btn.active {
@@ -161,8 +161,8 @@
 /* Product Grid */
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Reduced from 140px */
+    gap: 10px; /* Reduced from 12px */
     overflow-y: auto;
     padding-right: 5px;
     height: 100%;
@@ -186,7 +186,7 @@
     border: 1px solid #eaeaea;
     display: flex;
     flex-direction: column;
-    height: 200px;
+    height: 180px; /* Reduced from 200px */
 }
 
 .product-item:hover {
@@ -196,7 +196,7 @@
 }
 
 .product-image {
-    height: 120px;
+    height: 110px; /* Reduced from 120px */
     position: relative;
     overflow: hidden;
 }
@@ -216,8 +216,8 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    padding: 3px 8px;
-    font-size: 10px;
+    padding: 2px 6px; /* Reduced from 3px 8px */
+    font-size: 9px; /* Reduced from 10px */
     border-radius: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -234,7 +234,7 @@
 }
 
 .product-info {
-    padding: 10px;
+    padding: 8px; /* Reduced from 10px */
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -242,8 +242,8 @@
 }
 
 .product-info h5 {
-    margin: 0 0 8px 0;
-    font-size: 14px;
+    margin: 0 0 6px 0; /* Reduced from 0 0 8px 0 */
+    font-size: 13px; /* Reduced from 14px */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -254,7 +254,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
+    font-size: 11px; /* Reduced from 12px */
 }
 
 .product-meta .sku {
@@ -296,7 +296,7 @@
 }
 
 .cart-header {
-    padding: 15px;
+    padding: 12px; /* Reduced from 15px */
     border-bottom: 1px solid #eaeaea;
     display: flex;
     justify-content: space-between;
@@ -305,7 +305,7 @@
 
 .cart-header h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px; /* Reduced from 18px */
 }
 
 .cart-tools {
@@ -315,14 +315,14 @@
 
 .customer-selection {
     display: flex;
-    gap: 10px;
-    padding: 15px;
+    gap: 8px; /* Reduced from 10px */
+    padding: 12px; /* Reduced from 15px */
     border-bottom: 1px solid #f0f0f0;
 }
 
 .customer-selection select {
     flex: 1;
-    padding: 10px;
+    padding: 8px; /* Reduced from 10px */
     border: 1px solid #eaeaea;
     border-radius: 5px;
     background-color: #f9f9f9;
@@ -334,7 +334,7 @@
 }
 
 .customer-selection button {
-    width: 36px;
+    width: 32px; /* Reduced from 36px */
     padding: 0;
     background-color: #4d4d4d;
     color: white;
@@ -354,7 +354,7 @@
 .cart-items {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 0 15px;
+    padding: 0 12px; /* Reduced from 0 15px */
     max-height: calc(100% - 220px); /* Adjust based on header, summary, actions height */
 }
 
@@ -373,16 +373,65 @@
 }
 
 #cart-table th, #cart-table td {
-    padding: 12px 8px;
+    padding: 10px 6px;
     text-align: left;
     border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle; /* Added to ensure vertical alignment */
 }
 
-#cart-table th {
-    font-weight: 600;
-    color: #666;
-    font-size: 12px;
-    border-bottom: 2px solid #eaeaea;
+#cart-table th:nth-child(2), 
+#cart-table td:nth-child(2) {  /* Quantity column */
+    text-align: center;
+    width: 70px; /* Set fixed width for quantity column */
+    min-width: 70px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px; /* Reduced spacing */
+}
+
+.quantity-value {
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.quantity-btn {
+    border: none;
+    background: none;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0; /* Remove default padding */
+}
+
+.quantity-btn.minus {
+    background-color: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+}
+
+.quantity-btn.plus {
+    background-color: rgba(52, 199, 89, 0.1);
+    color: #34c759;
+}
+
+.quantity-btn:hover {
+    filter: brightness(0.95);
+    transform: scale(1.1);
+}
+
+quantity-btn:active {
+    transform: scale(0.95);
 }
 
 .empty-cart-message {
@@ -411,34 +460,6 @@
     font-size: 13px;
 }
 
-.quantity-btn {
-    border: none;
-    background: none;
-    width: 22px;
-    height: 22px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.quantity-btn.minus {
-    background-color: rgba(255, 59, 48, 0.1);
-    color: #ff3b30;
-}
-
-.quantity-btn.plus {
-    background-color: rgba(52, 199, 89, 0.1);
-    color: #34c759;
-}
-
-.quantity-btn:hover {
-    filter: brightness(0.95);
-}
-
 .remove-btn {
     border: none;
     background: none;
@@ -454,7 +475,7 @@
 
 .cart-summary {
     background-color: #f9f9f9;
-    padding: 15px;
+    padding: 12px; /* Reduced from 15px */
     border-top: 1px solid #eaeaea;
     flex-shrink: 0; /* Prevent shrinking */
 }
@@ -462,8 +483,8 @@
 .summary-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 14px;
+    margin-bottom: 6px; /* Reduced from 8px */
+    font-size: 13px; /* Reduced from 14px */
 }
 
 .discount-inputs {
@@ -473,7 +494,7 @@
 
 .discount-inputs input {
     flex: 1;
-    padding: 5px;
+    padding: 4px; /* Reduced from 5px */
     border: 1px solid #ddd;
     border-right: none;
     border-radius: 4px 0 0 4px;
@@ -488,18 +509,18 @@
 }
 
 .total-row {
-    margin-top: 10px;
-    padding-top: 10px;
+    margin-top: 8px; /* Reduced from 10px */
+    padding-top: 8px; /* Reduced from 10px */
     border-top: 1px solid #eaeaea;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 15px; /* Reduced from 16px */
     color: #333;
 }
 
 .payment-actions {
     display: flex;
-    gap: 8px;
-    padding: 15px;
+    gap: 6px; /* Reduced from 8px */
+    padding: 12px; /* Reduced from 15px */
     flex-shrink: 0; /* Prevent shrinking */
     background-color: white; /* Ensure background is visible */
     border-top: 1px solid #f0f0f0;
@@ -508,7 +529,7 @@
 }
 
 .btn-primary, .btn-secondary, .btn-warning, .btn-success {
-    padding: 12px;
+    padding: 10px; /* Reduced from 12px */
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -518,7 +539,7 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    min-height: 45px; /* Ensure consistent height */
+    min-height: 40px; /* Reduced from 45px */
 }
 
 .btn-primary {
@@ -593,7 +614,7 @@
 .modal-content {
     background-color: white;
     margin: 50px auto;
-    width: 500px;
+    width: 450px; /* Reduced from 500px */
     max-width: 95%;
     border-radius: 12px;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
@@ -617,13 +638,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 12px 16px; /* Reduced from 15px 20px */
     border-bottom: 1px solid #eaeaea;
 }
 
 .modal-header h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 17px; /* Reduced from 18px */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -648,16 +669,16 @@
 }
 
 .modal-body {
-    padding: 20px;
+    padding: 16px; /* Reduced from 20px */
     overflow-y: auto;
 }
 
 /* Payment Specific Styles */
 .payment-total {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px; /* Reduced from 20px */
     background-color: #f9f9f9;
-    padding: 15px;
+    padding: 12px; /* Reduced from 15px */
     border-radius: 6px;
 }
 
@@ -667,12 +688,12 @@
 }
 
 .payment-methods {
-    margin-bottom: 20px;
+    margin-bottom: 16px; /* Reduced from 20px */
 }
 
 .payment-methods h4 {
-    margin: 0 0 10px 0;
-    font-size: 15px;
+    margin: 0 0 8px 0; /* Reduced from 0 0 10px 0 */
+    font-size: 14px; /* Reduced from 15px */
     color: #666;
 }
 
@@ -683,7 +704,7 @@
 
 .payment-method-btn {
     flex: 1;
-    padding: 12px 8px;
+    padding: 10px 6px; /* Reduced from 12px 8px */
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -696,11 +717,11 @@
 }
 
 .payment-method-btn i {
-    font-size: 18px;
+    font-size: 16px; /* Reduced from 18px */
 }
 
 .payment-method-btn span {
-    font-size: 13px;
+    font-size: 12px; /* Reduced from 13px */
 }
 
 .payment-method-btn.active {
@@ -835,7 +856,7 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 260px;
+    width: 240px; /* Reduced from 260px */
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
@@ -847,13 +868,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
+    padding: 10px 12px; /* Reduced from 12px 15px */
     border-bottom: 1px solid #eaeaea;
 }
 
 .numpad-header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 15px; /* Reduced from 16px */
 }
 
 .close-numpad {
@@ -865,14 +886,14 @@
 }
 
 .numpad-display {
-    padding: 15px;
+    padding: 12px; /* Reduced from 15px */
     border-bottom: 1px solid #eaeaea;
 }
 
 .numpad-display input {
     width: 100%;
-    padding: 10px;
-    font-size: 24px;
+    padding: 8px; /* Reduced from 10px */
+    font-size: 22px; /* Reduced from 24px */
     text-align: right;
     border: 1px solid #eaeaea;
     border-radius: 6px;

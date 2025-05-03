@@ -2,25 +2,28 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    padding: 18px 24px;
+    padding: 12px 15px; /* Reduced from 15px 20px */
     border-radius: 12px;
     color: white;
-    max-width: 350px;
+    min-width: 280px; /* Reduced from 300px */
+    max-width: 320px; /* Reduced from 350px */
     z-index: 10000;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     animation: slide-in 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    font-size: 15px;
+    font-size: 13px; /* Reduced from 14px */
     display: flex;
     align-items: center;
     gap: 12px;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px; /* Reduced from 15px */
 }
 
 .notification::before {
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
-    margin-right: 8px;
+    font-size: 16px; /* Reduced from 18px */
+    margin-right: 10px; /* Reduced from 12px */
 }
 
 .notification.info {
@@ -84,9 +87,9 @@
 @media screen and (max-width: 576px) {
     .notification {
         top: auto;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
+        bottom: 16px; /* Reduced from 20px */
+        left: 16px; /* Reduced from 20px */
+        right: 16px; /* Reduced from 20px */
         max-width: none;
     }
 }

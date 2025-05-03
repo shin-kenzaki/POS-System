@@ -1,7 +1,7 @@
 .site-footer {
     background-color: #f8f9fa;
     border-top: 1px solid #e0e0e0;
-    padding: 20px 25px;
+    padding: 16px 20px;
     margin-top: auto;
     border-radius: 15px 15px 0 0;
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.03);
@@ -20,19 +20,19 @@
 
 .copyright {
     color: #666;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
 }
 
 .footer-links {
     display: flex;
-    gap: 20px;
+    gap: 16px;
 }
 
 .footer-links a {
     color: #666;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13px;
     transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     position: relative;
 }

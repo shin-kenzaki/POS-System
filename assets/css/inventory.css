@@ -4,37 +4,39 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px; /* Reduced from 20px */
 }
 
 .inventory-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px; /* Reduced from 10px */
 }
 
 .btn-primary {
     background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 7px 14px; /* Reduced from 8px 16px */
     border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
     font-weight: 500;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .btn-secondary {
     background-color: #f0f0f0;
     color: #333;
     border: 1px solid #ddd;
-    padding: 8px 16px;
+    padding: 7px 14px; /* Reduced from 8px 16px */
     border-radius: 4px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .btn-primary:hover {
@@ -48,8 +50,8 @@
 .inventory-filters {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 15px;
+    margin-bottom: 18px; /* Reduced from 20px */
+    gap: 12px; /* Reduced from 15px */
 }
 
 .search-container {
@@ -58,11 +60,11 @@
 }
 
 .search-container input {
-    padding: 10px 15px 10px 40px;
+    padding: 8px 15px 8px 36px; /* Reduced from 10px 15px 10px 40px */
     border-radius: 4px;
     border: 1px solid #ddd;
     width: 100%;
-    font-size: 14px;
+    font-size: 13px; /* Reduced from 14px */
 }
 
 .search-icon {
@@ -75,20 +77,21 @@
 
 .filter-container {
     display: flex;
-    gap: 10px;
+    gap: 8px; /* Reduced from 10px */
 }
 
 .filter-container select {
-    padding: 8px 15px;
+    padding: 7px 12px; /* Reduced from 8px 15px */
     border-radius: 4px;
     border: 1px solid #ddd;
     background-color: white;
-    min-width: 150px;
+    min-width: 140px; /* Reduced from 150px */
+    font-size: 13px; /* Added font size reduction */
 }
 
 .inventory-table-container {
     overflow-x: auto;
-    margin-bottom: 20px;
+    margin-bottom: 18px; /* Reduced from 20px */
     border-radius: 4px;
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -100,9 +103,10 @@
 }
 
 .inventory-table th, .inventory-table td {
-    padding: 12px 15px;
+    padding: 10px 12px; /* Reduced from 12px 15px */
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .inventory-table th {
@@ -127,8 +131,8 @@
 }
 
 .product-image img {
-    width: 40px;
-    height: 40px;
+    width: 36px; /* Reduced from 40px */
+    height: 36px; /* Reduced from 40px */
     object-fit: cover;
     border-radius: 4px;
 }
@@ -136,15 +140,29 @@
 .quantity-cell {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px; /* Reduced from 8px */
+    white-space: nowrap;
+}
+
+.quantity-value {
+    display: inline-block;
+    min-width: 30px; /* Added to ensure consistent width */
+    text-align: right; /* Right-align numbers for better readability */
 }
 
 .stock-badge {
-    padding: 2px 6px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 600;
     color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.3px; /* Reduced from 0.5px */
+    display: inline-flex; /* Changed from inline-block for better alignment */
+    align-items: center;
+    justify-content: center;
+    min-width: 60px; /* Added to ensure consistent badge width */
+    text-align: center;
 }
 
 .stock-badge.low {
@@ -164,8 +182,8 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 6px;
-    font-size: 14px;
+    padding: 5px; /* Reduced from 6px */
+    font-size: 13px; /* Reduced from 14px */
     border-radius: 4px;
     color: #555;
     transition: all 0.2s ease;
@@ -178,27 +196,27 @@
 
 .inventory-summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Reduced from 200px */
+    gap: 16px; /* Reduced from 20px */
+    margin-bottom: 25px; /* Reduced from 30px */
 }
 
 .summary-card {
     background-color: white;
     border-radius: 4px;
-    padding: 20px;
+    padding: 16px; /* Reduced from 20px */
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     text-align: center;
 }
 
 .summary-card h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0; /* Reduced from 0 0 10px 0 */
     color: #555;
-    font-size: 16px;
+    font-size: 15px; /* Reduced from 16px */
 }
 
 .summary-card .count {
-    font-size: 24px;
+    font-size: 22px; /* Reduced from 24px */
     margin: 0;
     font-weight: bold;
     color: #333;
@@ -221,10 +239,10 @@
     position: relative;
     background-color: white;
     margin: 50px auto;
-    padding: 25px;
+    padding: 20px; /* Reduced from 25px */
     border-radius: 8px;
     width: 90%;
-    max-width: 800px;
+    max-width: 750px; /* Reduced from 800px */
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     animation: modalSlideIn 0.3s ease;
 }
@@ -246,9 +264,9 @@
 
 .modal .close {
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 24px;
+    top: 12px; /* Reduced from 15px */
+    right: 16px; /* Reduced from 20px */
+    font-size: 22px; /* Reduced from 24px */
     cursor: pointer;
     color: #555;
 }
@@ -259,43 +277,43 @@
 
 .modal h2 {
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 18px; /* Reduced from 20px */
     color: #333;
     border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 15px;
+    padding-bottom: 12px; /* Reduced from 15px */
 }
 
 .form-row {
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
+    gap: 12px; /* Reduced from 15px */
+    margin-bottom: 12px; /* Reduced from 15px */
 }
 
 .form-group {
     flex: 1;
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Reduced from 15px */
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 4px; /* Reduced from 5px */
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px; /* Reduced from 14px */
 }
 
 .form-group input, .form-group select, .form-group textarea {
     width: 100%;
-    padding: 10px;
+    padding: 8px; /* Reduced from 10px */
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px; /* Reduced from 14px */
 }
 
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 8px; /* Reduced from 10px */
+    margin-top: 16px; /* Reduced from 20px */
 }
 
 .product-info-display {
@@ -463,11 +481,11 @@
 .product-view-tabs {
     display: flex;
     border-bottom: 1px solid #e9ecef;
-    margin-bottom: 20px;
+    margin-bottom: 16px; /* Reduced from 20px */
 }
 
 .tab-btn {
-    padding: 10px 15px;
+    padding: 10px 16px; /* Reduced from 12px 20px */
     background: transparent;
     border: none;
     cursor: pointer;
@@ -475,6 +493,7 @@
     color: #6c757d;
     position: relative;
     transition: all 0.3s;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .tab-btn:hover {
@@ -632,7 +651,7 @@
 
 /* Enhanced Product View Modal Styles */
 .product-detail-modal {
-    max-width: 950px;
+    max-width: 900px; /* Reduced from 950px */
     padding: 0;
     overflow: hidden;
     border-radius: 12px;
@@ -643,7 +662,7 @@
 
 .product-detail-header {
     background-color: #f8f9fa;
-    padding: 25px 30px;
+    padding: 20px 25px; /* Reduced from 25px 30px */
     border-bottom: 1px solid #e9ecef;
     position: relative;
     flex-shrink: 0;
@@ -653,12 +672,12 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Reduced from 15px */
 }
 
 .product-detail-title h2 {
     margin: 0;
-    font-size: 24px;
+    font-size: 22px; /* Reduced from 24px */
     color: #2c3e50;
     font-weight: 600;
     padding: 0;
@@ -710,7 +729,7 @@
 
 .product-quick-metrics {
     display: flex;
-    gap: 20px;
+    gap: 16px; /* Reduced from 20px */
     flex-wrap: wrap;
 }
 
@@ -718,36 +737,36 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px 15px;
+    padding: 8px 12px; /* Reduced from 10px 15px */
     border-radius: 8px;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    min-width: 120px;
+    min-width: 110px; /* Reduced from 120px */
     flex: 1;
 }
 
 .metric-value {
-    font-size: 22px;
+    font-size: 20px; /* Reduced from 22px */
     font-weight: 600;
     color: #2c3e50;
 }
 
 .metric-label {
-    font-size: 12px;
+    font-size: 11px; /* Reduced from 12px */
     color: #6c757d;
-    margin-top: 5px;
+    margin-top: 4px; /* Reduced from 5px */
 }
 
 .product-view-container {
     display: flex;
-    padding: 25px 30px;
-    gap: 30px;
+    padding: 20px 25px; /* Reduced from 25px 30px */
+    gap: 25px; /* Reduced from 30px */
     overflow-y: auto;
     flex: 1;
 }
 
 .product-view-left {
-    width: 250px;
+    width: 200px; /* Reduced from 250px */
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -755,14 +774,14 @@
 
 .product-view-image-container {
     width: 100%;
-    height: 250px;
+    height: 200px; /* Reduced from 250px */
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f8f9fa;
     border-radius: 8px;
     overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 12px; /* Reduced from 20px */
     border: 1px solid #e9ecef;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -776,7 +795,7 @@
 .product-quick-actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 7px; /* Reduced from 10px */
 }
 
 .action-btn {
@@ -784,7 +803,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px;
+    padding: 10px; /* Reduced from 12px */
     border-radius: 6px;
     border: none;
     background-color: #f8f9fa;
@@ -794,6 +813,7 @@
     font-weight: 500;
     width: 100%;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    font-size: 13px; /* Added font size reduction */
 }
 
 .action-btn:hover {
@@ -819,7 +839,7 @@
 .product-view-tabs {
     display: flex;
     border-bottom: 1px solid #e9ecef;
-    margin-bottom: 20px;
+    margin-bottom: 16px; /* Reduced from 20px */
     gap: 5px;
     overflow-x: auto;
     -ms-overflow-style: none; /* For Internet Explorer and Edge */
@@ -831,7 +851,7 @@
 }
 
 .tab-btn {
-    padding: 12px 20px;
+    padding: 10px 16px; /* Reduced from 12px 20px */
     background: transparent;
     border: none;
     cursor: pointer;
@@ -840,6 +860,7 @@
     position: relative;
     transition: all 0.3s ease;
     white-space: nowrap;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .tab-btn:hover {
@@ -882,17 +903,19 @@
 
 .product-view-details th {
     width: 35%;
-    padding: 8px 15px 8px 0;
+    padding: 8px 0; /* Reduced from 10px 0 */
     text-align: left;
     font-weight: 500;
     color: #6c757d;
     vertical-align: top;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .product-view-details td {
-    padding: 8px 0;
+    padding: 8px 0; /* Reduced from 10px 0 */
     font-weight: 500;
     color: #495057;
+    font-size: 13px; /* Added font size reduction */
 }
 
 .product-view-description {
@@ -906,19 +929,19 @@
 }
 
 .product-view-footer {
-    padding: 20px 30px;
+    padding: 16px 25px; /* Reduced from 20px 30px */
     border-top: 1px solid #e9ecef;
     display: flex;
     justify-content: flex-end;
-    gap: 15px;
+    gap: 12px; /* Reduced from 15px */
     flex-shrink: 0;
     background-color: #f8f9fa;
 }
 
 /* Stock level indicator */
 .stock-level-indicator {
-    margin-top: 25px;
-    padding: 15px 20px;
+    margin-top: 20px; /* Reduced from 25px */
+    padding: 12px 16px; /* Reduced from 15px 20px */
     background-color: #f8f9fa;
     border-radius: 8px;
 }
@@ -930,13 +953,13 @@
 .stock-level-labels {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 12px;
+    margin-bottom: 6px; /* Reduced from 8px */
+    font-size: 11px; /* Reduced from 12px */
     color: #6c757d;
 }
 
 .stock-level-bar {
-    height: 12px;
+    height: 10px; /* Reduced from 12px */
     background-color: #e9ecef;
     border-radius: 6px;
     position: relative;
