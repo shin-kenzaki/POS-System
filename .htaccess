@@ -81,3 +81,23 @@ RedirectMatch 403 /\..*$
 # Block bad bots
 RewriteCond %{HTTP_USER_AGENT} ^(Wget|Curl|Indy\ Library|libwww-perl|GetRight|GetWeb!|Go!Zilla|Download\ Demon|Go-Ahead-Got-It|TurnitinBot|GrabNet) [NC]
 RewriteRule .* - [F,L]
+
+# Allow access to img directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Allow direct access to images
+    RewriteRule ^img/ - [L]
+
+    # Redirect any 404 to index.php
+    ErrorDocument 404 /POS-System/index.php
+</IfModule>
+
+# Set proper MIME types
+<IfModule mod_mime.c>
+    AddType image/svg+xml svg svgz
+    AddType image/webp webp
+    AddType image/png png
+    AddType image/jpeg jpg jpeg
+    AddType image/gif gif
+</IfModule>

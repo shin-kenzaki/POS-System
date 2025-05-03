@@ -1,12 +1,12 @@
 <?php
-// Database connection parameters
-$host = 'localhost';
+// Database configuration
+$db_host = 'localhost';
+$db_user = 'root';
+$db_password = '';
 $db_name = 'pos_inventory';
-$username = 'root';
-$password = '';
 
 // Create connection
-$conn = new mysqli($host, $username, $password, $db_name);
+$conn = new mysqli($db_host, $db_user, $db_password, $db_name);
 
 // Check connection
 if ($conn->connect_error) {
