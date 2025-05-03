@@ -648,11 +648,6 @@ $sku_formats = [
                 <button type="button" id="view-product-close" class="btn-secondary">Close</button>
                 <button type="button" id="view-product-edit" class="btn-primary">Edit Product</button>
             </div>
-            
-            <!-- Print Template (Hidden) -->
-            <div id="print-template" style="display:none;">
-                <!-- ...existing code... -->
-            </div>
         </div>
     </div>
 </div>
@@ -1390,11 +1385,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const stockElement = document.getElementById('view-product-stock');
         const stockBadge = document.getElementById('view-product-stock-badge');
         const stockDetail = document.getElementById('view-product-stock-detail');
+        const progressBar = document.getElementById('stock-level-progress');
         
-        if (!stockElement || !stockBadge || !stockDetail) return;
+        if (!stockElement || !stockBadge || !stockDetail || !progressBar) return;
         
-        const currentStock = parseInt(stockElement.textContent);
+        const currentStock = parseInt(stockElement.textContent) || 0;
         const minStock = parseInt(document.getElementById('view-product-min-stock').textContent) || 10;
+        const maxStock = parseInt(document.getElementById('view-product-max-stock').textContent) || 100;
         
         // Update stock badge styling based on stock level
         stockBadge.className = 'stock-badge';
@@ -1403,13 +1400,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if (currentStock <= 0) {
             stockBadge.classList.add('out-of-stock');
             stockBadge.textContent = 'Out of Stock';
+            progressBar.style.width = '0%';
+            progressBar.style.backgroundColor = '#f44336';
         } else if (currentStock <= minStock) {
             stockBadge.classList.add('low-stock');
             stockBadge.textContent = 'Low Stock';
+            const percentage = Math.min(Math.max((currentStock / maxStock * 100), 0), 100);
+            progressBar.style.width = `${percentage}%`;
+            progressBar.style.backgroundColor = '#ff9800';
         } else {
             stockBadge.classList.add('in-stock');
             stockBadge.textContent = 'In Stock';
+            const percentage = Math.min(Math.max((currentStock / maxStock * 100), 0), 100);
+            progressBar.style.width = `${percentage}%`;
+            progressBar.style.backgroundColor = '#2ecc71';
         }
+        
+        // Update labels
+        document.getElementById('mid-stock-level').textContent = Math.floor(maxStock / 2);
+        document.getElementById('max-stock-level').textContent = maxStock;
     }
 
     // Update price breakdown chart in the view product modal
@@ -1422,9 +1431,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!costElement || !priceElement || !taxElement || !marginElement) return;
         
         // Extract values (remove currency symbols)
-        const costPrice = parseFloat(costElement.textContent.replace(/[^0-9.-]+/g, ''));
-        const sellingPrice = parseFloat(priceElement.textContent.replace(/[^0-9.-]+/g, ''));
-        const taxRate = parseFloat(taxElement.textContent.replace(/[^0-9.-]+/g, '')) / 100;
+        const costPrice = parseFloat(costElement.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        const sellingPrice = parseFloat(priceElement.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+        const taxRate = parseFloat(taxElement.textContent.replace(/[^0-9.-]+/g, '')) / 100 || 0;
         
         // Calculate margin
         const margin = sellingPrice - costPrice;
@@ -1433,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('view-profit-margin').textContent = `${marginPercent}%`;
         
         // Calculate inventory value
-        const stockQty = parseInt(document.getElementById('view-product-stock').textContent);
+        const stockQty = parseInt(document.getElementById('view-product-stock').textContent) || 0;
         const inventoryValue = (costPrice * stockQty).toFixed(2);
         document.getElementById('view-inventory-value').textContent = `$${inventoryValue}`;
         
@@ -1447,15 +1456,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 const costPercent = (costPrice / sellingPrice * 100).toFixed(2);
                 const taxAmount = sellingPrice * taxRate;
                 const taxPercent = (taxAmount / sellingPrice * 100).toFixed(2);
-                const marginPercent = (100 - costPercent - taxPercent).toFixed(2);
+                const marginPercent = (100 - parseFloat(costPercent) - parseFloat(taxPercent)).toFixed(2);
                 
                 costSegment.style.width = `${costPercent}%`;
                 taxSegment.style.width = `${taxPercent}%`;
                 marginSegment.style.width = `${marginPercent}%`;
                 
-                costSegment.setAttribute('title', `Cost: $${costPrice} (${costPercent}%)`);
+                costSegment.setAttribute('title', `Cost: $${costPrice.toFixed(2)} (${costPercent}%)`);
                 taxSegment.setAttribute('title', `Tax: $${taxAmount.toFixed(2)} (${taxPercent}%)`);
                 marginSegment.setAttribute('title', `Margin: $${margin.toFixed(2)} (${marginPercent}%)`);
+                
+                // Add content inside segments if width allows
+                costSegment.innerHTML = parseFloat(costPercent) > 15 ? `<span>Cost: ${costPercent}%</span>` : '';
+                marginSegment.innerHTML = parseFloat(marginPercent) > 15 ? `<span>Margin: ${marginPercent}%</span>` : '';
+                taxSegment.innerHTML = parseFloat(taxPercent) > 15 ? `<span>Tax: ${taxPercent}%</span>` : '';
             } else {
                 costSegment.style.width = '100%';
                 taxSegment.style.width = '0%';
