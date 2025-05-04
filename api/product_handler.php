@@ -32,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                     if ($image_url) {
                         // If it's not an absolute URL (doesn't start with http/https)
                         if (strpos($image_url, 'http') !== 0) {
-                            // Ensure the path is relative to the web root
-                            if (strpos($image_url, '/') !== 0 && strpos($image_url, 'assets/') !== 0) {
-                                $image_url = 'assets/images/' . $image_url;
+                            // Don't modify the path if it already has 'img/' in it
+                            if (strpos($image_url, 'img/') !== 0 && strpos($image_url, '/img/') !== 0) {
+                                $image_url = 'img/' . $image_url;
                             }
                         }
                     } else {
-                        $image_url = 'assets/images/product-placeholder.png';
+                        $image_url = 'img/product-placeholder.png';
                     }
                     
                     echo json_encode([
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 } else {
                     echo json_encode([
                         'success' => true,
-                        'image_url' => 'assets/images/product-placeholder.png'
+                        'image_url' => 'img/product-placeholder.png'
                     ]);
                 }
             } catch (Exception $e) {
