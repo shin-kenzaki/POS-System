@@ -355,23 +355,24 @@ include 'header.php';
         <div class="modal-body">
             <form id="customer-form">
                 <div class="input-group">
-                    <label for="customer-name">Full Name:</label>
-                    <input type="text" id="customer-name" required>
+                    <label for="customer-name">Full Name: <span class="required">*</span></label>
+                    <input type="text" id="customer-name" name="name" required>
                 </div>
                 <div class="input-row">
                     <div class="input-group">
                         <label for="customer-phone">Phone:</label>
-                        <input type="tel" id="customer-phone">
+                        <input type="tel" id="customer-phone" name="phone">
                     </div>
                     <div class="input-group">
                         <label for="customer-email">Email:</label>
-                        <input type="email" id="customer-email">
+                        <input type="email" id="customer-email" name="email">
                     </div>
                 </div>
                 <div class="input-group">
                     <label for="customer-address">Address:</label>
-                    <textarea id="customer-address"></textarea>
+                    <textarea id="customer-address" name="address"></textarea>
                 </div>
+                
                 <div class="modal-actions">
                     <div class="button-row">
                         <button type="button" class="btn-secondary customer-cancel">Cancel</button>

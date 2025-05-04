@@ -738,18 +738,88 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('customer-email').value;
             const address = document.getElementById('customer-address').value;
             
-            // In a real application, you would send this data to the server
-            // For now, we'll just simulate success
+            // Create form data object
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', phone);
+            formData.append('email', email);
+            formData.append('address', address);
             
-            alert(`Customer "${name}" has been saved successfully!`);
+            // Save button reference and show loading state
+            const saveButton = customerForm.querySelector('button[type="submit"]');
+            const originalText = saveButton.textContent;
+            saveButton.disabled = true;
+            saveButton.textContent = 'Saving...';
             
-            // Reset form and close modal
-            customerForm.reset();
-            customerModal.style.display = 'none';
-            
-            // In a real application, you would refresh the customer dropdown
-            // with the newly added customer selected
+            // Send data to the server
+            fetch('api/customer_handler.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Add the new customer to the dropdown
+                    const customerSelect = document.getElementById('customer-select');
+                    const option = document.createElement('option');
+                    option.value = data.customer.id;
+                    option.textContent = `${data.customer.name} (${data.customer.phone || 'No phone'})`;
+                    customerSelect.appendChild(option);
+                    
+                    // Select the newly added customer
+                    customerSelect.value = data.customer.id;
+                    
+                    // Show success message
+                    showNotification(`Customer "${name}" has been added successfully!`, 'success');
+                    
+                    // Reset form and close modal
+                    customerForm.reset();
+                    customerModal.style.display = 'none';
+                } else {
+                    // Show error message
+                    showNotification(data.message || 'Could not save customer', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving customer:', error);
+                showNotification('Error saving customer. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Restore button state
+                saveButton.disabled = false;
+                saveButton.textContent = originalText;
+            });
         });
+    }
+    
+    // Add notification function if not already present
+    function showNotification(message, type = 'info') {
+        // Create notification container if it doesn't exist
+        let container = document.querySelector('.notification-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'notification-container';
+            document.body.appendChild(container);
+        }
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            </div>
+            <div class="notification-content">${message}</div>
+        `;
+        
+        // Add to container
+        container.appendChild(notification);
+        
+        // Remove after delay
+        setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 500);
+        }, 5000);
     }
     
     // Implement Numpad functionality
@@ -920,4 +990,72 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Add ripple effect to buttons
+    const buttons = document.querySelectorAll('.btn-primary, .btn-secondary, .btn-warning, .btn-success, .category-btn, .payment-method-btn, .quick-cash-btn');
+    
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Remove existing ripples
+            const existingRipples = this.querySelectorAll('.ripple');
+            existingRipples.forEach(ripple => ripple.remove());
+            
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            
+            const diameter = Math.max(this.offsetWidth, this.offsetHeight);
+            const radius = diameter / 2;
+            
+            ripple.style.width = ripple.style.height = `${diameter}px`;
+            ripple.style.left = `${e.offsetX - radius}px`;
+            ripple.style.top = `${e.offsetY - radius}px`;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+
+    // Fix for payment method buttons to ensure only one is active
+    const paymentMethodButtons = document.querySelectorAll('.payment-method-btn');
+    paymentMethodButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active class from all buttons
+            paymentMethodButtons.forEach(b => b.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Hide all payment sections
+            document.querySelectorAll('.payment-section').forEach(section => section.style.display = 'none');
+            
+            // Show selected payment section
+            const method = this.dataset.method;
+            if (method === 'cash') {
+                document.getElementById('cash-payment-section').style.display = 'block';
+            } else if (method === 'credit_card' || method === 'debit_card') {
+                document.getElementById('card-payment-section').style.display = 'block';
+            } else if (method === 'mobile_payment') {
+                document.getElementById('mobile-payment-section').style.display = 'block';
+            }
+        });
+    });
+    
+    // Make buttons provide tactile feedback
+    const allButtons = document.querySelectorAll('button, .btn, .btn-icon');
+    allButtons.forEach(button => {
+        button.addEventListener('mousedown', function() {
+            this.style.transform = 'scale(0.95)';
+        });
+        
+        button.addEventListener('mouseup', function() {
+            this.style.transform = '';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
 });
