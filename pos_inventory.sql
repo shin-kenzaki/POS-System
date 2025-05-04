@@ -276,12 +276,36 @@ CREATE TABLE `users` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `users`
+-- Table structure for table `held_sales`
 --
 
-INSERT INTO `users` (`user_id`, `username`, `password`, `full_name`, `email`, `phone`, `role`, `is_active`, `last_login`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$10$HfzIhGCCaxqyaIdGgjARSuOKAcm1Uy82YfLuNaajn6JrjLWy9Sj/W', 'Admin User', 'admin@example.com', NULL, 'admin', 1, NULL, '2025-05-02 08:50:01', '2025-05-02 08:50:01');
+CREATE TABLE `held_sales` (
+  `held_sale_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `held_sale_items`
+--
+
+CREATE TABLE `held_sale_items` (
+  `held_item_id` int(11) NOT NULL,
+  `held_sale_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `unit_price` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -386,6 +410,22 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `held_sales`
+--
+ALTER TABLE `held_sales`
+  ADD PRIMARY KEY (`held_sale_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `held_sale_items`
+--
+ALTER TABLE `held_sale_items`
+  ADD PRIMARY KEY (`held_item_id`),
+  ADD KEY `held_sale_id` (`held_sale_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -468,6 +508,18 @@ ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `held_sales`
+--
+ALTER TABLE `held_sales`
+  MODIFY `held_sale_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `held_sale_items`
+--
+ALTER TABLE `held_sale_items`
+  MODIFY `held_item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -524,6 +576,20 @@ ALTER TABLE `sales`
 ALTER TABLE `sale_items`
   ADD CONSTRAINT `sale_items_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`sale_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `sale_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
+
+--
+-- Constraints for table `held_sales`
+--
+ALTER TABLE `held_sales`
+  ADD CONSTRAINT `held_sales_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `held_sales_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `held_sale_items`
+--
+ALTER TABLE `held_sale_items`
+  ADD CONSTRAINT `held_sale_items_ibfk_1` FOREIGN KEY (`held_sale_id`) REFERENCES `held_sales` (`held_sale_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `held_sale_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

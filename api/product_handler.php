@@ -198,9 +198,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Determine if we're updating an existing product
-        $product_id = !empty($_POST['product_id']) ? intval($_POST['product_id']) : null;
+        $is_update = !empty($_POST['product_id']); 
+        $product_id = $is_update ? intval($_POST['product_id']) : null;
         
-        if ($product_id) {
+        if ($is_update) {
             // If updating, check if we need to update the image
             if ($image_url === null && isset($_POST['remove_image']) && $_POST['remove_image'] == '1') {
                 // Get current image to delete
@@ -285,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception("Error updating product: " . $stmt->error);
             }
         } else {
-            // Create new product
+            // Create new product - Never include product_id in the insert
             $stmt = $conn->prepare("INSERT INTO products 
                 (name, category_id, description, sku, barcode, cost_price, selling_price, tax_rate, image_url) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -326,18 +327,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($inventory_stmt->execute()) {
                     // If initial quantity > 0, record it as an inventory transaction
                     if ($quantity > 0) {
-                        $user_id = $_SESSION['user_id'] ?? null;
+                        $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                         
-                        $transaction_stmt = $conn->prepare("INSERT INTO inventory_transactions 
-                            (product_id, user_id, transaction_type, quantity_change, before_quantity, after_quantity, notes) 
-                            VALUES (?, ?, 'purchase', ?, 0, ?, 'Initial stock')");
-                            
-                        $transaction_stmt->bind_param("iiii", 
-                            $product_id, 
-                            $user_id, 
-                            $quantity, 
-                            $quantity
-                        );
+                        // Check if user_id is null and adjust the statement accordingly
+                        if ($user_id === null) {
+                            $transaction_stmt = $conn->prepare("INSERT INTO inventory_transactions 
+                                (product_id, transaction_type, quantity_change, before_quantity, after_quantity, notes) 
+                                VALUES (?, 'purchase', ?, 0, ?, 'Initial stock')");
+                                
+                            $transaction_stmt->bind_param("iii", 
+                                $product_id, 
+                                $quantity, 
+                                $quantity
+                            );
+                        } else {
+                            $transaction_stmt = $conn->prepare("INSERT INTO inventory_transactions 
+                                (product_id, user_id, transaction_type, quantity_change, before_quantity, after_quantity, notes) 
+                                VALUES (?, ?, 'purchase', ?, 0, ?, 'Initial stock')");
+                                
+                            $transaction_stmt->bind_param("iiii", 
+                                $product_id, 
+                                $user_id, 
+                                $quantity, 
+                                $quantity
+                            );
+                        }
                         
                         $transaction_stmt->execute();
                     }

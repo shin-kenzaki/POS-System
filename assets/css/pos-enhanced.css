@@ -697,6 +697,22 @@ quantity-btn:active {
     overflow-y: auto;
 }
 
+.modal-actions {
+    padding: 0;
+    margin-top: 20px;
+}
+
+/* Add button-row styling for modal actions */
+.button-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.button-row button {
+    flex: 1;
+}
+
 /* Payment Specific Styles */
 .payment-total {
     text-align: center;
@@ -863,6 +879,115 @@ quantity-btn:active {
 
 .payment-note {
     margin-bottom: 15px;
+    border: 1px solid #eaeaea;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eaeaea;
+    cursor: pointer;
+}
+
+.note-header label {
+    margin: 0;
+    font-weight: 500;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.note-header i {
+    color: #666;
+}
+
+.note-tip {
+    font-weight: normal;
+    font-size: 12px;
+    color: #888;
+    margin-left: 6px;
+}
+
+.note-toggle {
+    background: none;
+    border: none;
+    color: #888;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-radius: 50%;
+}
+
+.note-toggle:hover {
+    background-color: rgba(0,0,0,0.05);
+}
+
+.note-toggle.collapsed {
+    transform: rotate(-90deg);
+}
+
+.note-content {
+    padding: 12px;
+    transition: max-height 0.3s, opacity 0.2s;
+}
+
+.note-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 12px;
+    overflow: hidden;
+}
+
+.payment-note textarea {
+    height: 80px;
+    resize: none;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.payment-note textarea:focus {
+    border-color: #666;
+    box-shadow: 0 0 0 2px rgba(102,102,102,0.1);
+    outline: none;
+}
+
+.note-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.character-count {
+    font-size: 12px;
+    color: #888;
+}
+
+.character-count.limit-near {
+    color: #f59e0b;
+}
+
+.character-count.limit-reached {
+    color: #ef4444;
+}
+
+.payment-note {
+    margin-bottom: 15px;
 }
 
 .payment-note textarea {
@@ -875,7 +1000,6 @@ quantity-btn:active {
     margin-top: 20px;
 }
 
-/* Numpad Styles */
 .numpad {
     position: fixed;
     bottom: 20px;
@@ -971,6 +1095,105 @@ quantity-btn:active {
 
 .numpad-action:hover {
     background-color: #f0f0f0;
+}
+
+/* Held Sales Styling */
+.held-sales-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.held-sale-item {
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #f9f9f9;
+    transition: all 0.2s;
+}
+
+.held-sale-item:hover {
+    border-color: #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.held-sale-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.held-sale-header h4 {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+}
+
+.held-sale-date {
+    font-size: 12px;
+    color: #888;
+}
+
+.held-sale-customer {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.held-sale-summary {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.held-sale-total {
+    font-weight: 700;
+    color: #4d4d4d;
+}
+
+.held-sale-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.held-sale-actions .btn-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.load-held-sale {
+    color: #34c759;
+}
+
+.delete-held-sale {
+    color: #ff3b30;
+}
+
+.no-held-sales {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    color: #999;
+    text-align: center;
+}
+
+.no-held-sales i {
+    font-size: 32px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+.no-held-sales p {
+    margin: 0;
+    font-size: 15px;
 }
 
 /* Responsive Design */

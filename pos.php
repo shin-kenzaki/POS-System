@@ -169,6 +169,7 @@ include 'header.php';
             <div class="payment-actions">
                 <button id="cancel-sale-btn" class="btn-secondary"><i class="fas fa-times"></i> Cancel</button>
                 <button id="hold-sale-btn" class="btn-warning"><i class="fas fa-pause"></i> Hold</button>
+                <button id="view-held-btn" class="btn-secondary"><i class="fas fa-list"></i> Held</button>
                 <button id="checkout-btn" class="btn-primary"><i class="fas fa-credit-card"></i> Payment</button>
             </div>
             
@@ -208,6 +209,27 @@ include 'header.php';
             <button class="numpad-action" data-action="quantity">Set Quantity</button>
             <button class="numpad-action" data-action="discount">Set Discount</button>
             <button class="numpad-action" data-action="price">Custom Price</button>
+        </div>
+    </div>
+    
+    <!-- Held Sales Modal -->
+    <div id="held-sales-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-pause-circle"></i> Held Sales</h2>
+                <span class="close held-sales-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="held-sales-container">
+                    <div class="no-held-sales">
+                        <i class="fas fa-pause-circle"></i>
+                        <p>No held sales found</p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="close-held-sales" class="btn-secondary">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -298,8 +320,21 @@ include 'header.php';
             </div>
             
             <div class="payment-note">
-                <label for="payment-note">Note:</label>
-                <textarea id="payment-note" placeholder="Add a note to this transaction..."></textarea>
+                <div class="note-header">
+                    <label for="payment-note">
+                        <i class="fas fa-sticky-note"></i> Note
+                        <span class="note-tip">(Order details, special instructions, etc.)</span>
+                    </label>
+                    <button type="button" class="note-toggle" title="Expand/Collapse">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="note-content">
+                    <textarea id="payment-note" placeholder="Add details about this transaction, special requests, or any relevant information for reference..."></textarea>
+                    <div class="note-footer">
+                        <span class="character-count">0/200 characters</span>
+                    </div>
+                </div>
             </div>
             
             <div class="payment-actions modal-actions">
@@ -338,8 +373,10 @@ include 'header.php';
                     <textarea id="customer-address"></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary customer-cancel">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Customer</button>
+                    <div class="button-row">
+                        <button type="button" class="btn-secondary customer-cancel">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Customer</button>
+                    </div>
                 </div>
             </form>
         </div>
