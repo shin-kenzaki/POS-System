@@ -34,9 +34,10 @@ try {
     }
     
     $product_id = intval($_POST['product_id']);
-    $adjustment_type = $_POST['adjustment_type'];
+    $adjustment_type = $_POST['adjustment_type']; // 'add', 'remove', or 'set'
     $quantity = intval($_POST['quantity']);
-    $reason = $_POST['reason'];
+    $reason_code = $_POST['reason'];
+    $other_reason = isset($_POST['other_reason']) ? trim($_POST['other_reason']) : '';
     $notes = isset($_POST['notes']) ? trim($_POST['notes']) : '';
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
     
@@ -105,39 +106,86 @@ try {
         throw new Exception("Failed to update inventory: " . $stmt->error);
     }
     
-    // Map reason to transaction_type
+    // Map reason_code to transaction_type and db_adjustment_type
     $transaction_type = 'adjustment'; // default
-    switch ($reason) {
+    $db_adjustment_type = null;
+    
+    switch ($reason_code) {
         case 'purchase':
             $transaction_type = 'purchase';
             break;
         case 'return':
             $transaction_type = 'return';
             break;
-        case 'damaged':
-            $transaction_type = 'adjustment';
-            break;
-        case 'correction':
-            $transaction_type = 'adjustment';
-            break;
         case 'stock_count':
             $transaction_type = 'stock_count';
             break;
+        case 'damaged':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'damage';
+            break;
+        case 'expired':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'expiry';
+            break;
+        case 'theft':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'theft';
+            break;
+        case 'lost':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'loss';
+            break;
+        case 'found':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'found';
+            break;
+        case 'correction':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'correction';
+            break;
+        case 'quality_issue':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'quality_issue';
+            break;
+        case 'other':
+            $transaction_type = 'adjustment';
+            $db_adjustment_type = 'other';
+            break;
     }
     
-    // Add transaction record
+    // If notes are empty, provide a generic note based on adjustment type and reason
+    if (empty($notes)) {
+        switch ($adjustment_type) {
+            case 'add':
+                $notes = "Added $quantity items.";
+                break;
+            case 'remove':
+                $notes = "Removed $quantity items.";
+                break;
+            case 'set':
+                $notes = "Stock level manually set to $quantity.";
+                break;
+        }
+    }
+    
+    // Add transaction record - now includes proper adjustment_type field and reason
     $transaction_stmt = $conn->prepare("INSERT INTO inventory_transactions 
-                                     (product_id, user_id, transaction_type, quantity_change, before_quantity, after_quantity, notes) 
-                                     VALUES (?, ?, ?, ?, ?, ?, ?)");
+                                     (product_id, user_id, transaction_type, reference_id, 
+                                     quantity_change, before_quantity, after_quantity, 
+                                     notes, reason, adjustment_type) 
+                                     VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)");
                                      
-    $transaction_stmt->bind_param("iisiiis", 
+    $transaction_stmt->bind_param("iisiissss", 
                               $product_id, 
                               $user_id, 
                               $transaction_type, 
                               $quantity_change, 
                               $current_quantity, 
                               $new_quantity, 
-                              $notes);
+                              $notes,
+                              $reason_text,
+                              $db_adjustment_type);
                               
     if (!$transaction_stmt->execute()) {
         throw new Exception("Failed to record transaction: " . $transaction_stmt->error);
@@ -150,7 +198,9 @@ try {
         'success' => true,
         'message' => 'Stock updated successfully',
         'new_quantity' => $new_quantity,
-        'product_id' => $product_id
+        'product_id' => $product_id,
+        'transaction_type' => $transaction_type,
+        'adjustment_type' => $db_adjustment_type
     ]);
     
 } catch (Exception $e) {

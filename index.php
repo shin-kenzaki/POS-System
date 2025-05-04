@@ -64,6 +64,7 @@ unset($_SESSION['login_error']);
         
         <div class="login-footer">
             <p>Forgot password? <a href="reset-password">Reset Password</a></p>
+            <p>Don't have an account? <a href="register.php">Create Account</a></p>
             <p style="margin-top: 15px;">© 2025 POS Inventory System</p>
         </div>
     </div>

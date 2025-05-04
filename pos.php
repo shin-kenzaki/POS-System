@@ -61,7 +61,9 @@ include 'header.php';
                                 <?php if(!empty($product['image_url'])): ?>
                                     <img src="<?php echo $product['image_url']; ?>" alt="<?php echo $product['name']; ?>">
                                 <?php else: ?>
-                                    <img src="assets/images/product-placeholder.png" alt="<?php echo $product['name']; ?>">
+                                    <div class="product-icon">
+                                        <i class="fas fa-box"></i>
+                                    </div>
                                 <?php endif; ?>
                                 
                                 <?php if($product['stock_quantity'] <= 5 && $product['stock_quantity'] > 0): ?>

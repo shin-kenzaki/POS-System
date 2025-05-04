@@ -167,7 +167,9 @@ $sku_formats = [
                         <tr class="<?php echo $stock_class; ?>" data-product-id="<?php echo $item['product_id']; ?>" data-category-id="<?php echo $item['category_id'] ?? ''; ?>">
                             <td><?php echo $item['product_id']; ?></td>
                             <td class="product-image">
-                                <img src="assets/images/product-placeholder.png" alt="<?php echo $item['name']; ?>">
+                                <div class="product-image-container" data-product-id="<?php echo $item['product_id']; ?>">
+                                    <i class="fas fa-box product-icon"></i>
+                                </div>
                             </td>
                             <td><?php echo $item['name']; ?></td>
                             <td><?php echo $item['category_name'] ?? 'Uncategorized'; ?></td>
@@ -371,7 +373,10 @@ $sku_formats = [
                         <label for="product-image">Product Image</label>
                         <div class="image-upload-container">
                             <div class="image-upload-preview" id="image-preview">
-                                <img src="assets/images/product-placeholder.png" id="preview-image" alt="Product Image">
+                                <img src="" id="preview-image" style="display:none;" alt="Product Image">
+                                <div id="preview-icon" class="image-preview-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
                             </div>
                             <div class="image-upload-controls">
                                 <label for="product-image" class="custom-file-upload">
@@ -431,8 +436,13 @@ $sku_formats = [
                         <select id="adjustment-reason" name="reason" required>
                             <option value="purchase">New Purchase</option>
                             <option value="return">Customer Return</option>
-                            <option value="damaged">Damaged/Expired</option>
+                            <option value="damaged">Damaged Items</option>
+                            <option value="expired">Expired Items</option>
+                            <option value="theft">Theft</option>
+                            <option value="lost">Lost Items</option>
+                            <option value="found">Found Items</option>
                             <option value="correction">Inventory Correction</option>
+                            <option value="quality_issue">Quality Issues</option>
                             <option value="stock_count">Physical Count</option>
                             <option value="other">Other</option>
                         </select>
@@ -471,6 +481,7 @@ $sku_formats = [
                         <tr>
                             <th>Date</th>
                             <th>Type</th>
+                            <th>Adjustment</th>
                             <th>Qty Change</th>
                             <th>Before</th>
                             <th>After</th>
@@ -480,7 +491,7 @@ $sku_formats = [
                         </tr>
                     </thead>
                     <tbody id="transaction-history-body">
-                        <tr><td colspan="8" style="text-align: center;">Loading history...</td></tr>
+                        <tr><td colspan="9" style="text-align: center;">Loading history...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -519,7 +530,10 @@ $sku_formats = [
             <div class="product-view-container">
                 <div class="product-view-left">
                     <div class="product-view-image-container">
-                        <img id="view-product-image" src="assets/images/product-placeholder.png" alt="Product Image">
+                        <img id="view-product-image" style="display:none;" src="" alt="Product Image">
+                        <div id="view-product-icon" class="product-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
                     </div>
                     <div class="product-quick-actions">
                         <button class="action-btn" id="view-product-adjust"><i class="fas fa-boxes"></i> Adjust Stock</button>
@@ -840,7 +854,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('product-id').value = '';
         document.getElementById('initial-quantity-group').style.display = '';
         document.getElementById('product-quantity').required = true;
-        previewImage.src = 'assets/images/product-placeholder.png';
+        previewImage.src = '';
+        previewImage.style.display = 'none';
+        previewIcon.style.display = 'flex';
         imagePreview.classList.remove('has-image');
         imageChanged = false;
         productModal.style.display = 'block';
@@ -881,9 +897,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Check if product has image and display it
                         if (result.data.image_url) {
                             previewImage.src = result.data.image_url;
+                            previewImage.style.display = 'block';
+                            previewIcon.style.display = 'none';
                             imagePreview.classList.add('has-image');
                         } else {
-                            previewImage.src = 'assets/images/product-placeholder.png';
+                            previewImage.style.display = 'none';
+                            previewIcon.style.display = 'flex';
                             imagePreview.classList.remove('has-image');
                         }
                         imageChanged = false;
@@ -1006,23 +1025,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const userNotes = formData.get('notes');
         const otherReason = formData.get('other_reason');
         
-        // Create combined notes with the reason clearly indicated
-        let combinedNotes = `Reason: ${reason === 'other' ? otherReason : reason}`;
-        if (userNotes) {
-            combinedNotes += `\nNotes: ${userNotes}`;
-        }
+        // We don't need to modify the form data anymore since the backend will handle it
         
-        // Update the notes field with the combined information
-        formData.set('notes', combinedNotes);
-        
-        // Also set the transaction_type field based on reason
-        // Map specific reasons to appropriate transaction types
-        let transactionType = 'adjustment'; // default
-        if (reason === 'purchase') transactionType = 'purchase';
-        if (reason === 'return') transactionType = 'return';
-        if (reason === 'stock_count') transactionType = 'stock_count';
-        formData.append('transaction_type', transactionType);
-
         fetch('api/stock_handler.php', {
             method: 'POST',
             body: formData
@@ -1037,6 +1041,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (row) {
                     row.querySelector('.quantity-value').textContent = result.new_quantity;
                     calculateSummary();
+                    
+                    // Update the view product modal if it's open and showing this product
+                    const viewProductId = document.getElementById('view-product-id').textContent;
+                    if (viewProductId == productId) {
+                        document.getElementById('view-product-stock').textContent = result.new_quantity;
+                        updateStockLevelIndicator();
+                    }
                 } else {
                     location.reload();
                 }
@@ -1062,39 +1073,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
             document.getElementById('history-product-name').textContent = productName;
             document.getElementById('history-current-stock').textContent = currentStock;
-            historyBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Loading history...</td></tr>';
+            historyBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Loading history...</td></tr>';
             historyModal.style.display = 'block';
 
             fetch(`api/history_handler.php?product_id=${productId}`)
                 .then(response => response.json())
                 .then(result => {
-                    if (result.success) {
-                        historyBody.innerHTML = '';
-                        if (result.data.length > 0) {
-                            result.data.forEach(item => {
-                                const tr = document.createElement('tr');
-                                tr.innerHTML = `
+                    const historyBody = document.getElementById('transaction-history-body');
+                    
+                    if (result.success && result.data && result.data.length > 0) {
+                        historyBody.innerHTML = result.data.map(item => {
+                            // Format the adjustment type for display
+                            let adjustmentType = '';
+                            if (item.adjustment_type) {
+                                // Capitalize and format the adjustment type
+                                adjustmentType = item.adjustment_type.charAt(0).toUpperCase() + item.adjustment_type.slice(1);
+                                if (adjustmentType === 'Add') adjustmentType = '<span class="badge adjustment-add">Add</span>';
+                                if (adjustmentType === 'Remove') adjustmentType = '<span class="badge adjustment-remove">Remove</span>';
+                                if (adjustmentType === 'Set') adjustmentType = '<span class="badge adjustment-set">Set</span>';
+                            }
+                            
+                            return `
+                                <tr>
                                     <td>${item.transaction_date_formatted}</td>
                                     <td>${item.transaction_type}</td>
-                                    <td>${item.quantity_change > 0 ? '+' : ''}${item.quantity_change}</td>
+                                    <td>${adjustmentType || '—'}</td>
+                                    <td class="${parseInt(item.quantity_change) >= 0 ? 'positive' : 'negative'}">${item.quantity_change}</td>
                                     <td>${item.before_quantity}</td>
                                     <td>${item.after_quantity}</td>
-                                    <td>${item.username}</td>
+                                    <td>${item.username || 'System'}</td>
                                     <td>${item.notes || '—'}</td>
                                     <td>${item.reference_id || '—'}</td>
-                                `;
-                                historyBody.appendChild(tr);
-                            });
-                        } else {
-                            historyBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No transaction history found.</td></tr>';
-                        }
+                                </tr>
+                            `;
+                        }).join('');
                     } else {
-                         historyBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Error loading history: ${result.message}</td></tr>`;
+                        historyBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No history found for this product.</td></tr>';
                     }
+                    
+                    viewProductModal.style.display = 'none';
+                    historyModal.style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Error fetching history:', error);
-                     historyBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Failed to load history.</td></tr>';
+                     historyBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Failed to load history.</td></tr>';
                 });
         });
     });
@@ -1128,10 +1150,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('view-product-updated').textContent = data.updated_at ? new Date(data.updated_at).toLocaleDateString() : '—';
 
                         const productImage = document.getElementById('view-product-image');
+                        const productIcon = document.getElementById('view-product-icon');
+                        
                         if (data.image_url) {
                             productImage.src = data.image_url;
+                            productImage.style.display = 'block';
+                            productIcon.style.display = 'none';
                         } else {
-                            productImage.src = 'assets/images/product-placeholder.png';
+                            productImage.style.display = 'none';
+                            productIcon.style.display = 'flex';
                         }
 
                         viewProductModal.style.display = 'block';
@@ -1251,6 +1278,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const productImage = document.getElementById('product-image');
     const previewImage = document.getElementById('preview-image');
+    const previewIcon = document.getElementById('preview-icon');
     const removeImageBtn = document.getElementById('remove-image');
     const imagePreview = document.getElementById('image-preview');
     const removeImageFlag = document.getElementById('remove-image-flag');
@@ -1268,6 +1296,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const reader = new FileReader();
             reader.onload = function(event) {
                 previewImage.src = event.target.result;
+                previewImage.style.display = 'block';
+                previewIcon.style.display = 'none';
                 imagePreview.classList.add('has-image');
                 imageChanged = true;
                 removeImageFlag.value = "0"; // Reset remove flag if new image is selected
@@ -1277,79 +1307,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     removeImageBtn.addEventListener('click', function() {
-        previewImage.src = 'assets/images/product-placeholder.png';
+        previewImage.src = '';
+        previewImage.style.display = 'none';
+        previewIcon.style.display = 'flex';
         productImage.value = '';
         imagePreview.classList.remove('has-image');
         imageChanged = true;
         removeImageFlag.value = "1"; // Set remove flag when image is removed
     });
 
-    // Update the product row's edit handler to display the saved image
-    document.querySelectorAll('.edit-product').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const row = this.closest('tr');
-            const productId = row.dataset.productId;
-
-            fetch(`api/product_handler.php?product_id=${productId}`)
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success && result.data) {
-                        const data = result.data;
-                        document.getElementById('modal-title').textContent = 'Edit Product';
-                        productForm.reset();
-                        document.getElementById('product-id').value = data.product_id;
-                        document.getElementById('product-name').value = data.name;
-                        document.getElementById('product-category').value = data.category_id || '';
-                        document.getElementById('product-sku').value = data.sku || '';
-                        document.getElementById('product-barcode').value = data.barcode || '';
-                        document.getElementById('product-description').value = data.description || '';
-                        document.getElementById('product-cost').value = data.cost_price;
-                        document.getElementById('product-price').value = data.selling_price;
-                        document.getElementById('product-tax').value = data.tax_rate || 0;
-                        document.getElementById('product-min-stock').value = data.min_stock_level || 10;
-                        document.getElementById('product-max-stock').value = data.max_stock_level || 100;
-                        document.getElementById('product-location').value = data.location || '';
-
-                        document.getElementById('initial-quantity-group').style.display = 'none';
-                        document.getElementById('product-quantity').required = false;
-                        document.getElementById('product-quantity').value = '';
-
-                        // Reset image remove flag
-                        document.getElementById('remove-image-flag').value = "0";
-
-                        // Check if product has image and display it
-                        if (result.data.image_url) {
-                            previewImage.src = result.data.image_url;
-                            imagePreview.classList.add('has-image');
-                        } else {
-                            previewImage.src = 'assets/images/product-placeholder.png';
-                            imagePreview.classList.remove('has-image');
-                        }
-                        imageChanged = false;
-
-                        productModal.style.display = 'block';
-                    } else {
-                        showToast(result.message || 'Failed to load product data.', false);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching product:', error);
-                    showToast('Error fetching product data.', false);
-                });
-        });
-    });
-
-    // Also update the inventory table to show actual product images
+    // Update the product images loading function
     function updateProductImages() {
-        document.querySelectorAll('.inventory-table .product-image img').forEach(img => {
-            const row = img.closest('tr');
-            const productId = row.dataset.productId;
+        document.querySelectorAll('.product-image-container').forEach(container => {
+            const productId = container.dataset.productId;
             
             fetch(`api/product_handler.php?product_id=${productId}&get_image=true`)
                 .then(response => response.json())
                 .then(result => {
-                    if (result.success && result.image_url && result.image_url !== '../assets/images/product-placeholder.png') {
-                        img.src = result.image_url;
+                    if (result.success && result.image_url) {
+                        // Replace icon with image
+                        const icon = container.querySelector('.product-icon');
+                        if (icon) {
+                            const img = document.createElement('img');
+                            img.src = result.image_url;
+                            img.alt = "Product";
+                            container.replaceChild(img, icon);
+                        }
                     }
                 })
                 .catch(error => console.error('Error loading image:', error));
@@ -1498,6 +1481,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <tr>
                             <td>${item.transaction_date_formatted}</td>
                             <td>${item.transaction_type}</td>
+                            <td>${item.adjustment_type}</td>
                             <td class="${parseInt(item.quantity_change) >= 0 ? 'positive' : 'negative'}">${item.quantity_change}</td>
                             <td>${item.before_quantity}</td>
                             <td>${item.after_quantity}</td>
@@ -1507,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </tr>
                     `).join('');
                 } else {
-                    historyBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No history found for this product.</td></tr>';
+                    historyBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No history found for this product.</td></tr>';
                 }
                 
                 viewProductModal.style.display = 'none';
@@ -1634,10 +1618,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('view-product-updated').textContent = data.updated_at ? new Date(data.updated_at).toLocaleDateString() : '—';
 
                         const productImage = document.getElementById('view-product-image');
+                        const productIcon = document.getElementById('view-product-icon');
+                        
                         if (data.image_url) {
                             productImage.src = data.image_url;
+                            productImage.style.display = 'block';
+                            productIcon.style.display = 'none';
                         } else {
-                            productImage.src = 'assets/images/product-placeholder.png';
+                            productImage.style.display = 'none';
+                            productIcon.style.display = 'flex';
                         }
 
                         viewProductModal.style.display = 'block';
@@ -1867,6 +1856,19 @@ document.addEventListener('DOMContentLoaded', function() {
     .product-image img:hover {
         transform: scale(1.1);
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .product-icon {
+        font-size: 24px;
+        color: #adb5bd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        background-color: #f8f9fa;
     }
 
     .quantity-cell {
@@ -2193,7 +2195,7 @@ document.addEventListener('DOMContentLoaded', function() {
         text-align: right;
     }
 
-    .history-table td:nth-child(8) {
+    .history-table td:nth-child(9) {
         text-align: center;
     }
 
@@ -2250,6 +2252,11 @@ document.addEventListener('DOMContentLoaded', function() {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+    }
+
+    .image-preview-icon {
+        font-size: 48px;
+        color: #adb5bd;
     }
 
     .image-upload-preview.has-image {
@@ -2648,6 +2655,11 @@ document.addEventListener('DOMContentLoaded', function() {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+    }
+    
+    .product-icon {
+        font-size: 48px;
+        color: #adb5bd;
     }
     
     .product-quick-actions {

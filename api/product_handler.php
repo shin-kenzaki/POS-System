@@ -37,18 +37,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                                 $image_url = 'img/' . $image_url;
                             }
                         }
+                        
+                        echo json_encode([
+                            'success' => true,
+                            'image_url' => $image_url
+                        ]);
                     } else {
-                        $image_url = 'img/product-placeholder.png';
+                        // Return null instead of a placeholder so we can display icon
+                        echo json_encode([
+                            'success' => true,
+                            'image_url' => null
+                        ]);
                     }
-                    
-                    echo json_encode([
-                        'success' => true,
-                        'image_url' => $image_url
-                    ]);
                 } else {
                     echo json_encode([
                         'success' => true,
-                        'image_url' => 'img/product-placeholder.png'
+                        'image_url' => null
                     ]);
                 }
             } catch (Exception $e) {
@@ -62,9 +66,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
         
         // Get product details
-        $stmt = $conn->prepare("SELECT p.*, i.quantity, i.min_stock_level, i.max_stock_level, i.location 
+        $stmt = $conn->prepare("SELECT p.*, i.quantity, i.min_stock_level, i.max_stock_level, 
+                                i.location, i.last_restock_date, c.name as category_name 
                                 FROM products p 
                                 LEFT JOIN inventory i ON p.product_id = i.product_id 
+                                LEFT JOIN categories c ON p.category_id = c.category_id
                                 WHERE p.product_id = ?");
         $stmt->bind_param("i", $product_id);
         $stmt->execute();

@@ -88,6 +88,8 @@ CREATE TABLE `inventory_transactions` (
   `after_quantity` int(11) NOT NULL,
   `transaction_date` datetime DEFAULT current_timestamp(),
   `notes` text DEFAULT NULL,
+  `reason` text DEFAULT NULL,
+  `adjustment_type` enum('damage','expiry','theft','loss','found','correction','quality_issue','other') DEFAULT NULL COMMENT 'Applicable when transaction_type is adjustment',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
