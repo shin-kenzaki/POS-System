@@ -139,40 +139,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selling_price = floatval($_POST['selling_price']);
         $tax_rate = isset($_POST['tax_rate']) ? floatval($_POST['tax_rate']) : 0;
         
-        // Handle image upload
+        // Handle image upload - UPDATED CODE
         $image_url = null;
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            // Create img directory if it doesn't exist
-            $upload_dir = '../img/';
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0755, true);
+        if (isset($_FILES['image']) && is_array($_FILES['image'])) {
+            // UPLOAD_ERR_NO_FILE = 4, this is a normal case when no file is selected
+            if ($_FILES['image']['error'] == 0) {
+                // Create img directory if it doesn't exist
+                $upload_dir = '../img/';
+                if (!file_exists($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                
+                // Validate file type
+                $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                $file_type = $_FILES['image']['type'];
+                
+                if (!in_array($file_type, $allowed_types)) {
+                    throw new Exception('Invalid file type. Only JPG, PNG, GIF, and WEBP are allowed.');
+                }
+                
+                // Validate file size (max 2MB)
+                if ($_FILES['image']['size'] > 2 * 1024 * 1024) {
+                    throw new Exception('File size exceeds the limit (2MB).');
+                }
+                
+                // Generate unique filename
+                $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $file_name = uniqid('product_') . '.' . $file_extension;
+                $file_path = $upload_dir . $file_name;
+                
+                // Move uploaded file to destination
+                if (!move_uploaded_file($_FILES['image']['tmp_name'], $file_path)) {
+                    throw new Exception('Failed to upload image.');
+                }
+                
+                // Store relative path in database
+                $image_url = 'img/' . $file_name;
+            } else if ($_FILES['image']['error'] != 4) {
+                // If it's an error different from "no file uploaded", throw an exception
+                $error_messages = [
+                    1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                    2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+                    3 => 'The uploaded file was only partially uploaded',
+                    6 => 'Missing a temporary folder',
+                    7 => 'Failed to write file to disk',
+                    8 => 'A PHP extension stopped the file upload'
+                ];
+                
+                $error_code = $_FILES['image']['error'];
+                $error_message = isset($error_messages[$error_code]) 
+                    ? $error_messages[$error_code] 
+                    : 'Unknown upload error';
+                
+                throw new Exception('Image upload error: ' . $error_message);
             }
-            
-            // Validate file type
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            $file_type = $_FILES['image']['type'];
-            
-            if (!in_array($file_type, $allowed_types)) {
-                throw new Exception('Invalid file type. Only JPG, PNG, GIF, and WEBP are allowed.');
-            }
-            
-            // Validate file size (max 2MB)
-            if ($_FILES['image']['size'] > 2 * 1024 * 1024) {
-                throw new Exception('File size exceeds the limit (2MB).');
-            }
-            
-            // Generate unique filename
-            $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $file_name = uniqid('product_') . '.' . $file_extension;
-            $file_path = $upload_dir . $file_name;
-            
-            // Move uploaded file to destination
-            if (!move_uploaded_file($_FILES['image']['tmp_name'], $file_path)) {
-                throw new Exception('Failed to upload image.');
-            }
-            
-            // Store relative path in database
-            $image_url = 'img/' . $file_name;
+            // If error code is 4 (UPLOAD_ERR_NO_FILE), it means no file was uploaded
+            // In this case, we leave $image_url as null
         }
         
         // Determine if we're updating an existing product
@@ -222,7 +244,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 updated_at = CURRENT_TIMESTAMP
                 WHERE product_id = ?");
                 
-            $stmt->bind_param("sisssddsi", 
+            // FIX: Change binding type for tax_rate from 'i' to 'd' for decimal values
+            $stmt->bind_param("sisssdddsi", 
                 $name, 
                 $category_id, 
                 $description, 

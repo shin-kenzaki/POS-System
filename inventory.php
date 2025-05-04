@@ -193,7 +193,7 @@ $sku_formats = [
                                 <button class="btn-icon view-product" title="View Product" data-id="<?php echo $item['product_id']; ?>">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn-icon edit-product" title="Edit Product"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon edit-product" title="Edit Product" data-id="<?php echo $item['product_id']; ?>"><i class="fas fa-edit"></i></button>
                                 <button class="btn-icon adjust-stock" title="Adjust Stock"><i class="fas fa-boxes"></i></button>
                                 <button class="btn-icon view-history" title="View History"><i class="fas fa-history"></i></button>
                             </td>
