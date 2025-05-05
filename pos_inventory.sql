@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 02, 2025 at 10:56 AM
+-- Generation Time: May 05, 2025 at 07:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -35,6 +35,17 @@ CREATE TABLE `categories` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`category_id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, 'Clothing and Accessories', NULL, '2025-05-04 04:26:43', '2025-05-04 04:26:43'),
+(2, 'Food and Beverages', NULL, '2025-05-04 04:26:43', '2025-05-04 04:26:43'),
+(3, 'Electronics', NULL, '2025-05-04 04:26:43', '2025-05-04 04:26:43'),
+(4, 'Home Goods', NULL, '2025-05-04 04:26:43', '2025-05-04 04:26:43'),
+(5, 'Services', NULL, '2025-05-04 04:26:43', '2025-05-04 04:26:43');
+
 -- --------------------------------------------------------
 
 --
@@ -50,6 +61,45 @@ CREATE TABLE `customers` (
   `loyalty_points` int(11) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customers`
+--
+
+INSERT INTO `customers` (`customer_id`, `name`, `email`, `phone`, `address`, `loyalty_points`, `created_at`, `updated_at`) VALUES
+(1, 'Kenneth Bonaagua', 'bonaaguakennethlaurence@gmail.com', '09702582474', 'B1 L8 Ph-F1 Balagtas St. Francisco Homes - Narra, San Jose Del Monte, Bulacan', 0, '2025-05-04 06:07:22', '2025-05-04 06:07:22'),
+(2, 'Shin Kenzaki', 'shinkenzaki@gmail.com', '09123456789', NULL, 0, '2025-05-04 14:00:44', '2025-05-04 14:00:44');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `held_sales`
+--
+
+CREATE TABLE `held_sales` (
+  `held_sale_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `held_sale_items`
+--
+
+CREATE TABLE `held_sale_items` (
+  `held_item_id` int(11) NOT NULL,
+  `held_sale_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `unit_price` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,6 +120,16 @@ CREATE TABLE `inventory` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory`
+--
+
+INSERT INTO `inventory` (`inventory_id`, `product_id`, `quantity`, `min_stock_level`, `max_stock_level`, `last_restock_date`, `last_stock_count`, `location`, `created_at`, `updated_at`) VALUES
+(23, 23, 50, 10, 100, NULL, NULL, 'Shelf A1', '2025-05-04 04:38:07', '2025-05-04 08:04:47'),
+(24, 24, 50, 10, 100, NULL, NULL, 'Shelf A1', '2025-05-04 04:41:01', '2025-05-04 08:04:40'),
+(25, 25, 100, 10, 100, NULL, NULL, 'Shelf B1', '2025-05-04 07:11:35', '2025-05-04 08:04:53'),
+(26, 26, 100, 10, 100, NULL, NULL, 'Shelf B1', '2025-05-04 07:20:28', '2025-05-04 08:04:59');
 
 -- --------------------------------------------------------
 
@@ -92,6 +152,16 @@ CREATE TABLE `inventory_transactions` (
   `adjustment_type` enum('damage','expiry','theft','loss','found','correction','quality_issue','other') DEFAULT NULL COMMENT 'Applicable when transaction_type is adjustment',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_transactions`
+--
+
+INSERT INTO `inventory_transactions` (`transaction_id`, `product_id`, `user_id`, `transaction_type`, `reference_id`, `quantity_change`, `before_quantity`, `after_quantity`, `transaction_date`, `notes`, `reason`, `adjustment_type`, `created_at`) VALUES
+(23, 23, 2, 'purchase', NULL, 50, 0, 50, '2025-05-04 12:38:07', 'Initial stock', NULL, NULL, '2025-05-04 04:38:07'),
+(24, 24, 2, 'purchase', NULL, 50, 0, 50, '2025-05-04 12:41:01', 'Initial stock', NULL, NULL, '2025-05-04 04:41:01'),
+(25, 25, 2, 'purchase', NULL, 100, 0, 100, '2025-05-04 15:11:35', 'Initial stock', NULL, NULL, '2025-05-04 07:11:35'),
+(26, 26, 2, 'purchase', NULL, 100, 0, 100, '2025-05-04 15:20:28', 'Initial stock', NULL, NULL, '2025-05-04 07:20:28');
 
 -- --------------------------------------------------------
 
@@ -133,6 +203,16 @@ CREATE TABLE `products` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`product_id`, `category_id`, `name`, `description`, `sku`, `barcode`, `cost_price`, `selling_price`, `tax_rate`, `image_url`, `is_active`, `created_at`, `updated_at`) VALUES
+(23, 2, 'Rebisco Crackers', 'Rebisco Crackers 33g - Republic Biscuit Corp.', 'RBSC_CRCKRS_33G', '4800092113338', 5.00, 7.00, 0.10, NULL, 1, '2025-05-04 04:38:07', '2025-05-04 08:04:47'),
+(24, 2, 'Baguio Special Peanut Brittle', 'Baguio Special Handmade Peanut Brittle - Mother Shepherd Food Products', 'BGIO_SPCL_PNT_BRTLE_400G', '03435875', 50.00, 55.00, 0.10, NULL, 1, '2025-05-04 04:41:01', '2025-05-04 08:04:40'),
+(25, 1, 'Sevich Hair Volume Powder', 'Hair Volume Powder Light Control - Sevich International Inc.', 'SVCH_HR_VLM_PWDR_8G', '6971774281343', 50.00, 55.00, 0.10, NULL, 1, '2025-05-04 07:11:35', '2025-05-04 08:04:53'),
+(26, 1, 'Sweet Night Blue Mens Fragrance', 'Blue Men\'s Fragrance 65ml - Sweet Night', 'SN_BMF_65ML', '4806533454503', 80.00, 100.00, 0.10, NULL, 1, '2025-05-04 07:20:28', '2025-05-04 08:04:59');
+
 -- --------------------------------------------------------
 
 --
@@ -167,6 +247,38 @@ CREATE TABLE `purchase_order_items` (
   `unit_cost` decimal(10,2) NOT NULL,
   `received_quantity` int(11) DEFAULT 0,
   `subtotal` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `refunds`
+--
+
+CREATE TABLE `refunds` (
+  `refund_id` int(11) NOT NULL,
+  `sale_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `refund_amount` decimal(10,2) NOT NULL,
+  `refund_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `reason` varchar(255) NOT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `refund_items`
+--
+
+CREATE TABLE `refund_items` (
+  `refund_item_id` int(11) NOT NULL,
+  `refund_id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -276,78 +388,13 @@ CREATE TABLE `users` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `held_sales`
+-- Dumping data for table `users`
 --
 
-CREATE TABLE `held_sales` (
-  `held_sale_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `customer_id` int(11) DEFAULT NULL,
-  `note` text DEFAULT NULL,
-  `total_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `held_sale_items`
---
-
-CREATE TABLE `held_sale_items` (
-  `held_item_id` int(11) NOT NULL,
-  `held_sale_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 1,
-  `unit_price` decimal(10,2) NOT NULL,
-  `subtotal` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `refunds`
---
-
-CREATE TABLE `refunds` (
-  `refund_id` int(11) NOT NULL AUTO_INCREMENT,
-  `sale_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `refund_amount` decimal(10,2) NOT NULL,
-  `refund_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `reason` varchar(255) NOT NULL,
-  `notes` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`refund_id`),
-  KEY `sale_id` (`sale_id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `refunds_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`sale_id`) ON DELETE CASCADE,
-  CONSTRAINT `refunds_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `refund_items`
---
-
-CREATE TABLE `refund_items` (
-  `refund_item_id` int(11) NOT NULL AUTO_INCREMENT,
-  `refund_id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`refund_item_id`),
-  KEY `refund_id` (`refund_id`),
-  KEY `product_id` (`product_id`),
-  CONSTRAINT `refund_items_ibfk_1` FOREIGN KEY (`refund_id`) REFERENCES `refunds` (`refund_id`) ON DELETE CASCADE,
-  CONSTRAINT `refund_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `users` (`user_id`, `username`, `password`, `full_name`, `email`, `phone`, `role`, `is_active`, `remember_token`, `last_login`, `created_at`, `updated_at`) VALUES
+(2, 'admin', '$2y$10$p1qxBZclY/W87VPdsVZgVezyEiS71bxLAz2cQSSnr9918hvW4xpd.', '', 'admin123@gmail.com', NULL, 'admin', 1, NULL, '2025-05-05 12:03:44', '2025-05-04 04:36:57', '2025-05-05 04:03:44'),
+(3, 'shin', '$2y$10$RHBzJK4aAXqx0umCS/mVQOFfoZFh5t1rMwq5nywjPSOeyJ7WEAXJ6', '', 'shinkenzaki@gmail.com', NULL, 'admin', 1, NULL, '2025-05-05 13:27:52', '2025-05-05 05:27:47', '2025-05-05 05:27:52');
 
 --
 -- Indexes for dumped tables
@@ -365,6 +412,22 @@ ALTER TABLE `categories`
 ALTER TABLE `customers`
   ADD PRIMARY KEY (`customer_id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `held_sales`
+--
+ALTER TABLE `held_sales`
+  ADD PRIMARY KEY (`held_sale_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `customer_id` (`customer_id`);
+
+--
+-- Indexes for table `held_sale_items`
+--
+ALTER TABLE `held_sale_items`
+  ADD PRIMARY KEY (`held_item_id`),
+  ADD KEY `held_sale_id` (`held_sale_id`),
+  ADD KEY `product_id` (`product_id`);
 
 --
 -- Indexes for table `inventory`
@@ -415,6 +478,22 @@ ALTER TABLE `purchase_order_items`
   ADD KEY `product_id` (`product_id`);
 
 --
+-- Indexes for table `refunds`
+--
+ALTER TABLE `refunds`
+  ADD PRIMARY KEY (`refund_id`),
+  ADD KEY `sale_id` (`sale_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `refund_items`
+--
+ALTER TABLE `refund_items`
+  ADD PRIMARY KEY (`refund_item_id`),
+  ADD KEY `refund_id` (`refund_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
 -- Indexes for table `sales`
 --
 ALTER TABLE `sales`
@@ -452,38 +531,6 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `held_sales`
---
-ALTER TABLE `held_sales`
-  ADD PRIMARY KEY (`held_sale_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `customer_id` (`customer_id`);
-
---
--- Indexes for table `held_sale_items`
---
-ALTER TABLE `held_sale_items`
-  ADD PRIMARY KEY (`held_item_id`),
-  ADD KEY `held_sale_id` (`held_sale_id`),
-  ADD KEY `product_id` (`product_id`);
-
---
--- Indexes for table `refunds`
---
-ALTER TABLE `refunds`
-  ADD PRIMARY KEY (`refund_id`),
-  ADD KEY `sale_id` (`sale_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `refund_items`
---
-ALTER TABLE `refund_items`
-  ADD PRIMARY KEY (`refund_item_id`),
-  ADD KEY `refund_id` (`refund_id`),
-  ADD KEY `product_id` (`product_id`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -491,25 +538,37 @@ ALTER TABLE `refund_items`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `held_sales`
+--
+ALTER TABLE `held_sales`
+  MODIFY `held_sale_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `held_sale_items`
+--
+ALTER TABLE `held_sale_items`
+  MODIFY `held_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `inventory_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `inventory_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
 --
 ALTER TABLE `inventory_transactions`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -521,7 +580,7 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
@@ -536,16 +595,28 @@ ALTER TABLE `purchase_order_items`
   MODIFY `po_item_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `refunds`
+--
+ALTER TABLE `refunds`
+  MODIFY `refund_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `refund_items`
+--
+ALTER TABLE `refund_items`
+  MODIFY `refund_item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `sale_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `sale_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `sale_items`
 --
 ALTER TABLE `sale_items`
-  MODIFY `sale_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `sale_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -563,35 +634,25 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `held_sales`
---
-ALTER TABLE `held_sales`
-  MODIFY `held_sale_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `held_sale_items`
---
-ALTER TABLE `held_sale_items`
-  MODIFY `held_item_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `refunds`
---
-ALTER TABLE `refunds`
-  MODIFY `refund_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `refund_items`
---
-ALTER TABLE `refund_items`
-  MODIFY `refund_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `held_sales`
+--
+ALTER TABLE `held_sales`
+  ADD CONSTRAINT `held_sales_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `held_sales_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `held_sale_items`
+--
+ALTER TABLE `held_sale_items`
+  ADD CONSTRAINT `held_sale_items_ibfk_1` FOREIGN KEY (`held_sale_id`) REFERENCES `held_sales` (`held_sale_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `held_sale_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
 
 --
 -- Constraints for table `inventory`
@@ -634,34 +695,6 @@ ALTER TABLE `purchase_order_items`
   ADD CONSTRAINT `purchase_order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
 
 --
--- Constraints for table `sales`
---
-ALTER TABLE `sales`
-  ADD CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `sales_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE SET NULL;
-
---
--- Constraints for table `sale_items`
---
-ALTER TABLE `sale_items`
-  ADD CONSTRAINT `sale_items_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`sale_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `sale_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
-
---
--- Constraints for table `held_sales`
---
-ALTER TABLE `held_sales`
-  ADD CONSTRAINT `held_sales_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `held_sales_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE SET NULL;
-
---
--- Constraints for table `held_sale_items`
---
-ALTER TABLE `held_sale_items`
-  ADD CONSTRAINT `held_sale_items_ibfk_1` FOREIGN KEY (`held_sale_id`) REFERENCES `held_sales` (`held_sale_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `held_sale_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
-
---
 -- Constraints for table `refunds`
 --
 ALTER TABLE `refunds`
@@ -674,6 +707,20 @@ ALTER TABLE `refunds`
 ALTER TABLE `refund_items`
   ADD CONSTRAINT `refund_items_ibfk_1` FOREIGN KEY (`refund_id`) REFERENCES `refunds` (`refund_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `refund_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
+
+--
+-- Constraints for table `sales`
+--
+ALTER TABLE `sales`
+  ADD CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `sales_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `sale_items`
+--
+ALTER TABLE `sale_items`
+  ADD CONSTRAINT `sale_items_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`sale_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sale_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -56,7 +56,8 @@ include 'header.php';
                             data-id="<?php echo $product['product_id']; ?>" 
                             data-price="<?php echo $product['selling_price']; ?>"
                             data-category="<?php echo $product['category_id']; ?>"
-                            data-stock="<?php echo $product['stock_quantity']; ?>">
+                            data-stock="<?php echo $product['stock_quantity']; ?>"
+                            data-taxrate="<?php echo $product['tax_rate']; ?>">
                             <div class="product-image">
                                 <?php if(!empty($product['image_url'])): ?>
                                     <img src="<?php echo $product['image_url']; ?>" alt="<?php echo $product['name']; ?>">

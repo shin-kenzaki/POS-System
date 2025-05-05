@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cart variables
     let cart = [];
-    const taxRate = 0.075; // 7.5% tax rate
     const cartTable = document.getElementById('cart-table');
     const emptyCartRow = document.querySelector('.empty-cart');
     
@@ -105,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const productName = this.querySelector('.product-info h5').textContent;
             const productPrice = parseFloat(this.dataset.price);
             const productStock = parseInt(this.dataset.stock);
+            const productTaxRate = parseFloat(this.dataset.taxrate || 0); // Get tax rate from data attribute
             
             if (productStock <= 0) {
                 alert('This product is out of stock');
@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     name: productName,
                     price: productPrice,
                     quantity: 1,
+                    taxRate: productTaxRate, // Store tax rate with the item
                     total: productPrice
                 });
                 updateCartDisplay();
@@ -188,7 +189,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const afterDiscount = subtotal - discountAmount;
-        const tax = afterDiscount * taxRate;
+        
+        // Calculate tax based on individual product tax rates
+        let tax = 0;
+        cart.forEach(item => {
+            const itemSubtotal = item.price * item.quantity;
+            // Apply discount proportionally to each item before calculating tax
+            const itemDiscount = discountAmount * (itemSubtotal / subtotal) || 0;
+            const itemAfterDiscount = itemSubtotal - itemDiscount;
+            const itemTax = itemAfterDiscount * item.taxRate;
+            tax += itemTax;
+        });
+        
         const total = afterDiscount + tax;
         
         // Update display
@@ -335,6 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const paymentMethod = document.querySelector('.payment-method-btn.active').dataset.method;
+        let paymentReference = '';
         
         if (paymentMethod === 'cash') {
             const tendered = parseFloat(document.getElementById('cash-tendered').value || 0);
@@ -344,16 +357,156 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Insufficient payment amount.');
                 return;
             }
+            
+            paymentReference = `Cash tendered: $${tendered.toFixed(2)}, Change: $${(tendered - total).toFixed(2)}`;
+        } else if (paymentMethod === 'credit_card' || paymentMethod === 'debit_card') {
+            // Get last 4 digits of card if available
+            const cardNumber = document.getElementById('card-number').value;
+            if (cardNumber && cardNumber.length >= 4) {
+                const last4 = cardNumber.slice(-4);
+                paymentReference = `Card ending in ${last4}`;
+            }
+        } else if (paymentMethod === 'mobile_payment') {
+            const transRef = document.getElementById('transaction-reference').value;
+            if (transRef) {
+                paymentReference = `Mobile payment ref: ${transRef}`;
+            }
         }
         
-        // Here you would normally send the sale data to the server
-        alert('Sale completed successfully!');
+        // Get sale data from the page
+        const subtotal = parseFloat(document.getElementById('subtotal').textContent.replace('$', ''));
+        const taxAmount = parseFloat(document.getElementById('tax').textContent.replace('$', ''));
+        const discountValue = parseFloat(document.getElementById('discount-amount').value || 0);
+        const discountType = document.getElementById('discount-type').value;
         
-        // Reset cart and close modal
-        cart = [];
-        updateCartDisplay();
-        paymentModal.style.display = 'none';
+        let discountAmount = 0;
+        if (discountType === 'fixed') {
+            discountAmount = discountValue;
+        } else { // percentage
+            discountAmount = subtotal * (discountValue / 100);
+        }
+        
+        const totalAmount = parseFloat(document.getElementById('total').textContent.replace('$', ''));
+        const customerId = document.getElementById('customer-select').value;
+        const notes = document.getElementById('payment-note') ? document.getElementById('payment-note').value : '';
+        
+        // Disable the button to prevent double submission
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        // Calculate tax for each item
+        cart.forEach(item => {
+            const itemSubtotal = item.price * item.quantity;
+            // Apply discount proportionally
+            const itemDiscount = discountAmount * (itemSubtotal / subtotal) || 0;
+            const itemAfterDiscount = itemSubtotal - itemDiscount;
+            item.taxAmount = itemAfterDiscount * item.taxRate;
+        });
+        
+        // Prepare sale data to send to the server
+        const saleData = {
+            items: cart,
+            customer: customerId,
+            payment_method: paymentMethod,
+            payment_reference: paymentReference,
+            subtotal: subtotal,
+            tax_amount: taxAmount,
+            discount_amount: discountAmount,
+            total_amount: totalAmount,
+            notes: notes
+        };
+        
+        // If this is a held sale being processed, include the ID
+        const heldSaleId = sessionStorage.getItem('processing_held_sale_id');
+        if (heldSaleId) {
+            saleData.held_sale_id = heldSaleId;
+        }
+        
+        // Send data to the server
+        fetch('api/process_sale.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(saleData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message with receipt ID
+                showNotification(`Sale completed successfully! Receipt: ${data.receipt_id}`, 'success');
+                
+                // Clear any held sale ID from session storage
+                sessionStorage.removeItem('processing_held_sale_id');
+                
+                // Reset cart and close modal
+                cart = [];
+                updateCartDisplay();
+                paymentModal.style.display = 'none';
+                
+                // Optionally: offer to print receipt or show receipt modal
+                if (confirm('Sale completed! Would you like to print the receipt?')) {
+                    // Print receipt functionality (could route to a receipt page)
+                    window.open(`receipt.php?sale_id=${data.sale_id}`, '_blank');
+                }
+            } else {
+                // Show error message
+                showNotification('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error processing sale:', error);
+            showNotification('Error processing sale. Please try again.', 'error');
+        })
+        .finally(() => {
+            // Re-enable the button
+            this.disabled = false;
+            this.innerHTML = 'Complete Sale';
+        });
     });
+    
+    // Update the loadHeldSale function to store the held sale ID
+    function loadHeldSale(saleId) {
+        // Extract the numeric ID from the string format 'hold-123'
+        const numericId = saleId.split('-')[1];
+        
+        fetch(`api/held_sales.php?id=${numericId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Could not find the held sale.');
+                    return;
+                }
+                
+                // Confirm if current cart has items
+                if (cart.length > 0) {
+                    if (!confirm('Loading a held sale will replace your current cart. Continue?')) {
+                        return;
+                    }
+                }
+                
+                // Load the held items into cart
+                cart = [...data.sale.items];
+                
+                // Set the customer if applicable
+                if (data.sale.customer !== null && data.sale.customer !== '0') {
+                    document.getElementById('customer-select').value = data.sale.customer;
+                }
+                
+                // Store the held sale ID in session storage
+                sessionStorage.setItem('processing_held_sale_id', numericId);
+                
+                // Update cart display
+                updateCartDisplay();
+                
+                // Close the modal
+                heldSalesModal.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error loading held sale:', error);
+                alert('Error loading the held sale. Please try again.');
+            });
+    }
     
     // Cancel sale button
     document.getElementById('cancel-sale-btn').addEventListener('click', function() {
@@ -629,48 +782,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p>Error loading held sales</p>
                     </div>
                 `;
-            });
-    }
-    
-    function loadHeldSale(saleId) {
-        // Extract the numeric ID from the string format 'hold-123'
-        const numericId = saleId.split('-')[1];
-        
-        fetch(`api/held_sales.php?id=${numericId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (!data.success) {
-                    alert('Could not find the held sale.');
-                    return;
-                }
-                
-                // Confirm if current cart has items
-                if (cart.length > 0) {
-                    if (!confirm('Loading a held sale will replace your current cart. Continue?')) {
-                        return;
-                    }
-                }
-                
-                // Load the held items into cart
-                cart = [...data.sale.items];
-                
-                // Set the customer if applicable
-                if (data.sale.customer !== null && data.sale.customer !== '0') {
-                    document.getElementById('customer-select').value = data.sale.customer;
-                }
-                
-                // Update cart display
-                updateCartDisplay();
-                
-                // Remove the held sale from server
-                deleteHeldSale(saleId);
-                
-                // Close the modal
-                heldSalesModal.style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error loading held sale:', error);
-                alert('Error loading the held sale. Please try again.');
             });
     }
     
